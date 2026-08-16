@@ -72,7 +72,7 @@ fun DashboardScreen(
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
                     StatCard(Modifier.weight(1f), "Aujourd'hui", "${today.size}", Icons.Default.Today, TaxiBlue)
-                    StatCard(Modifier.weight(1f), "Demain", "${tomorrow.size}", Icons.Default.EventUpcoming, WarningOrange)
+                    StatCard(Modifier.weight(1f), "Demain", "${tomorrow.size}", Icons.Default.Event, WarningOrange)
                     StatCard(Modifier.weight(1f), "Terminées", "$todayDone", Icons.Default.CheckCircle, SuccessGreen)
                 }
             }
