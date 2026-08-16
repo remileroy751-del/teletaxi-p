@@ -165,7 +165,9 @@ fun WeatherScreen(viewModel: PlannerViewModel) {
                 }.take(12)
 
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    items(nextHours) { (index, millis, _) ->
+                    items(nextHours) { hourEntry ->
+                        val index = hourEntry.first
+                        val millis = hourEntry.second
                         val (_, hEmoji) = WeatherCodeMapper.describe(hourly.weather_code[index])
                         Card(shape = RoundedCornerShape(14.dp)) {
                             Column(
