@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TéléTaxi Planner</string>
+    <string name="alarm_channel_name">Rappels de courses</string>
+    <string name="alarm_channel_desc">Notifications de rappel avant chaque course programmée</string>
+</resources>
