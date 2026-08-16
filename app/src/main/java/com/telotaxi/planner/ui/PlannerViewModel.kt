@@ -6,31 +6,18 @@ import androidx.lifecycle.viewModelScope
 import com.telotaxi.planner.data.Ride
 import com.telotaxi.planner.data.RideRepository
 import com.telotaxi.planner.data.RideStatus
-import com.telotaxi.planner.weather.WeatherRepository
-import com.telotaxi.planner.weather.WeatherResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-sealed class WeatherUiState {
-    object Loading : WeatherUiState()
-    data class Success(val data: WeatherResponse, val locationLabel: String) : WeatherUiState()
-    data class Error(val message: String) : WeatherUiState()
-    object PermissionNeeded : WeatherUiState()
-}
-
 class PlannerViewModel(application: Application) : AndroidViewModel(application) {
 
     private val rideRepository = RideRepository(application)
-    private val weatherRepository = WeatherRepository(application)
 
     private val _allRides = MutableStateFlow<List<Ride>>(emptyList())
     val allRides: StateFlow<List<Ride>> = _allRides.asStateFlow()
-
-    private val _weatherState = MutableStateFlow<WeatherUiState>(WeatherUiState.Loading)
-    val weatherState: StateFlow<WeatherUiState> = _weatherState.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -70,28 +57,4 @@ class PlannerViewModel(application: Application) : AndroidViewModel(application)
     fun deleteRide(ride: Ride) = viewModelScope.launch { rideRepository.deleteRide(ride) }
     fun markCompleted(ride: Ride) = viewModelScope.launch { rideRepository.updateRide(ride.copy(status = RideStatus.TERMINEE)) }
     fun markCancelled(ride: Ride) = viewModelScope.launch { rideRepository.updateRide(ride.copy(status = RideStatus.ANNULEE)) }
-
-    fun loadWeather() {
-        viewModelScope.launch {
-            _weatherState.value = WeatherUiState.Loading
-            try {
-                val location = weatherRepository.getCurrentLocation()
-                if (location == null) {
-                    _weatherState.value = WeatherUiState.Error("Position GPS indisponible. Vérifiez que la localisation est activée.")
-                    return@launch
-                }
-                val forecast = weatherRepository.getForecast(location.first, location.second)
-                _weatherState.value = WeatherUiState.Success(
-                    forecast,
-                    "Lat ${"%.2f".format(location.first)}, Lon ${"%.2f".format(location.second)}"
-                )
-            } catch (e: Exception) {
-                _weatherState.value = WeatherUiState.Error(e.message ?: "Erreur de chargement de la météo")
-            }
-        }
-    }
-
-    fun notifyPermissionNeeded() {
-        _weatherState.value = WeatherUiState.PermissionNeeded
-    }
 }

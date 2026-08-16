@@ -9,12 +9,10 @@ Application Android native (Kotlin + Jetpack Compose) pour chauffeurs de télé-
 - **Alarmes de rappel automatiques** : choix du délai (15, 30, 45 ou 60 min avant la course). Utilise `AlarmManager.setExactAndAllowWhileIdle` pour se déclencher même téléphone en veille, avec notification sonore + vibration + écran de rappel prioritaire.
 - **Reprogrammation après redémarrage** : un `BroadcastReceiver` + `WorkManager` reprogramment automatiquement toutes les alarmes en attente si le téléphone redémarre.
 - **Liste des courses** : onglets Aujourd'hui / Demain / À venir, avec actions rapides (terminer, annuler).
-- **Itinéraire GPS intégré** : bouton "Vers le client" / "Vers destination" sur chaque course, qui ouvre le sélecteur natif Android pour lancer la navigation avec Google Maps, Waze, ou toute autre application installée.
-- **Météo en temps réel géolocalisée** : via l'API gratuite [Open-Meteo](https://open-meteo.com/) (aucune clé API requise), avec position GPS du chauffeur (`FusedLocationProviderClient`). Affiche conditions actuelles, prévisions du jour et du lendemain, prévisions horaires, et une alerte visuelle si les conditions sont dangereuses pour la conduite.
-- **Écran de bienvenue obligatoire** : au tout premier lancement, le chauffeur doit renseigner son nom et prénom avant d'accéder à l'application.
-- **Salutation quotidienne personnalisée** : une seule fois par jour, à l'ouverture de l'app, un message de bienvenue aléatoire et personnalisé s'affiche (ex. "Bonjour Jean, bien réveillé ce matin ?").
 - **Rapports de chiffre d'affaires** : filtrage par semaine en cours ou période personnalisée (date à date), avec total du chiffre d'affaires, nombre de courses terminées, détail course par course, et **export PDF** en un clic (enregistré dans le dossier Téléchargements du téléphone).
 - **Pied de page** : "App créée par Ecom Academy. Support WhatsApp +228 99 37 36 35" visible en bas de l'application, avec lien WhatsApp cliquable.
+
+> Note : la météo géolocalisée a été retirée temporairement pour simplifier la compilation. Elle pourra être réintégrée plus tard si besoin.
 
 ## Architecture technique
 
@@ -24,8 +22,7 @@ com.telotaxi.planner
 ├── alarm/              → AlarmScheduler, RideAlarmReceiver, BootReceiver (rappels programmés)
 ├── maps/               → MapsLauncher (itinéraire GPS, ouverture WhatsApp)
 ├── reports/            → ReportPdfExporter (génération PDF native, sans dépendance)
-├── weather/            → OpenMeteoApi (Retrofit), WeatherRepository (géolocalisation + appel API)
-└── ui/                 → PlannerViewModel + écrans Compose (Bienvenue, Dashboard, Courses, Ajout, Météo, Rapports)
+└── ui/                 → PlannerViewModel + écrans Compose (Bienvenue, Dashboard, Courses, Ajout, Rapports)
 ```
 
 - **Stockage local** : Room (SQLite), aucune donnée envoyée en ligne — tout reste sur le téléphone du chauffeur.

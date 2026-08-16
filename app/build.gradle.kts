@@ -60,13 +60,6 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
-    // Localisation (pour la météo géolocalisée)
-    implementation("com.google.android.gms:play-services-location:21.3.0")
-
-    // Réseau (appel API météo Open-Meteo)
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-
     // WorkManager (fiabilité des rappels au redémarrage)
     implementation("androidx.work:work-runtime-ktx:2.9.1")
 

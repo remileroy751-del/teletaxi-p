@@ -17,25 +17,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.telotaxi.planner.data.Ride
 import com.telotaxi.planner.data.RideStatus
 import com.telotaxi.planner.ui.PlannerViewModel
-import com.telotaxi.planner.ui.WeatherUiState
 import com.telotaxi.planner.ui.theme.*
-import com.telotaxi.planner.weather.WeatherCodeMapper
 
 @Composable
 fun DashboardScreen(
     viewModel: PlannerViewModel,
     onAddRide: () -> Unit,
     onOpenRide: (Long) -> Unit,
-    onOpenWeather: () -> Unit,
     onOpenReports: () -> Unit
 ) {
     val allRides by viewModel.allRides.collectAsStateWithLifecycle()
-    val weatherState by viewModel.weatherState.collectAsStateWithLifecycle()
 
     val today = viewModel.todayRides()
     val tomorrow = viewModel.tomorrowRides()
     val todayDone = today.count { it.status == RideStatus.TERMINEE }
-    val todayPlanned = today.count { it.status == RideStatus.PLANIFIEE }
 
     Scaffold(
         floatingActionButton = {
@@ -80,11 +75,6 @@ fun DashboardScreen(
                     StatCard(Modifier.weight(1f), "Demain", "${tomorrow.size}", Icons.Default.EventUpcoming, WarningOrange)
                     StatCard(Modifier.weight(1f), "Terminées", "$todayDone", Icons.Default.CheckCircle, SuccessGreen)
                 }
-            }
-
-            // Mini widget météo cliquable
-            item {
-                WeatherPreviewCard(weatherState, onClick = onOpenWeather)
             }
 
             // Courses du jour
@@ -156,45 +146,6 @@ private fun EmptyStateRow(text: String) {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(text, color = TextSecondary)
-        }
-    }
-}
-
-@Composable
-private fun WeatherPreviewCard(state: WeatherUiState, onClick: () -> Unit) {
-    Card(
-        onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = TaxiBlue)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            when (state) {
-                is WeatherUiState.Success -> {
-                    val current = state.data.current
-                    val (label, emoji) = WeatherCodeMapper.describe(current.weather_code)
-                    Column {
-                        Text("Météo actuelle", color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.8f), style = MaterialTheme.typography.labelSmall)
-                        Text("${current.temperature_2m.toInt()}°C · $label", color = androidx.compose.ui.graphics.Color.White, style = MaterialTheme.typography.titleLarge)
-                    }
-                    Text(emoji, style = MaterialTheme.typography.headlineMedium)
-                }
-                is WeatherUiState.Loading -> {
-                    Text("Chargement de la météo…", color = androidx.compose.ui.graphics.Color.White)
-                    CircularProgressIndicator(color = androidx.compose.ui.graphics.Color.White, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                }
-                is WeatherUiState.Error -> {
-                    Text("Météo indisponible — appuyer pour réessayer", color = androidx.compose.ui.graphics.Color.White)
-                    Icon(Icons.Default.Refresh, contentDescription = null, tint = androidx.compose.ui.graphics.Color.White)
-                }
-                is WeatherUiState.PermissionNeeded -> {
-                    Text("Activer la localisation pour voir la météo", color = androidx.compose.ui.graphics.Color.White)
-                    Icon(Icons.Default.LocationOn, contentDescription = null, tint = androidx.compose.ui.graphics.Color.White)
-                }
-            }
         }
     }
 }

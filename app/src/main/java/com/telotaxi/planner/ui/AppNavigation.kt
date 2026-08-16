@@ -5,7 +5,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,17 +31,14 @@ import com.telotaxi.planner.ui.screens.AddRideScreen
 import com.telotaxi.planner.ui.screens.DashboardScreen
 import com.telotaxi.planner.ui.screens.ReportsScreen
 import com.telotaxi.planner.ui.screens.RidesListScreen
-import com.telotaxi.planner.ui.screens.WeatherScreen
 import com.telotaxi.planner.ui.screens.WelcomeScreen
-import kotlinx.coroutines.launch
 
 private sealed class Screen(val route: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector) {
     object Dashboard : Screen("dashboard", "Accueil", Icons.Default.Dashboard)
     object Rides : Screen("rides", "Courses", Icons.Default.List)
-    object Weather : Screen("weather", "Météo", Icons.Default.WbSunny)
 }
 
-private val bottomItems = listOf(Screen.Dashboard, Screen.Rides, Screen.Weather)
+private val bottomItems = listOf(Screen.Dashboard, Screen.Rides)
 
 @Composable
 fun AppNavigation() {
@@ -83,8 +79,6 @@ fun AppNavigation() {
             }
         )
     }
-
-    LaunchedEffect(Unit) { viewModel.loadWeather() }
 
     Scaffold(
         bottomBar = {
@@ -128,7 +122,6 @@ fun AppNavigation() {
                     viewModel = viewModel,
                     onAddRide = { navController.navigate("add_ride") },
                     onOpenRide = { id -> navController.navigate("edit_ride/$id") },
-                    onOpenWeather = { navController.navigate(Screen.Weather.route) },
                     onOpenReports = { navController.navigate("reports") }
                 )
             }
@@ -137,9 +130,6 @@ fun AppNavigation() {
                     viewModel = viewModel,
                     onOpenRide = { id -> navController.navigate("edit_ride/$id") }
                 )
-            }
-            composable(Screen.Weather.route) {
-                WeatherScreen(viewModel = viewModel)
             }
             composable("reports") {
                 ReportsScreen(
@@ -177,4 +167,3 @@ fun AppNavigation() {
         }
     }
 }
-
